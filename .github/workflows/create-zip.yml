@@ -1,0 +1,36 @@
+name: ZIP Release
+
+on:
+  push:
+    branches:
+      - main
+permissions:
+  contents: write
+
+jobs:
+  zip-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Archive repo
+        run: |
+          zip -r "${{ github.sha }}.zip" . -x ".git/*"
+
+      - name: SHA_1 Hash
+        id: hash
+        run: |
+          HASH=$(sha1sum "${{ github.sha }}.zip" | awk '{print $1}')
+          echo "sha1=$HASH" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: Build ${{ github.run_number }}
+          body: |
+            SHA1: ${{ steps.hash.outputs.sha1 }}
+          files: ${{ github.sha }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
