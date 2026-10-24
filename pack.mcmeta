@@ -1,0 +1,10 @@
+{
+  "pack": {
+    "pack_format": 15,
+    "supported_formats": [1, 255],
+    "min_format": 1,
+    "max_format": 255,
+    "description": "§lmakes the hitbox poof"
+  }
+}
+
